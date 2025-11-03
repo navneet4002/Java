@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Multithreading - Project Showcase</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS Variables ("Spring Green" Theme) --- */
+    :root {
+      --bg-light-green: #f4fdf4;
+      --bg-white: #ffffff;
+      --text-dark: #1a3a1a;
+      --text-grey: #4a694a;
+      
+      --grad-primary: linear-gradient(90deg, #00bfa5 0%, #008a4a 100%);
+      --grad-primary-color: #008a4a;
+      --grad-secondary-color: #00bfa5;
+      
+      --border-color: #d4f0d4;
+      --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.04);
+      --shadow-strong: 0 8px 25px rgba(0, 138, 74, 0.15);
+    }
+
+    /* --- Global Styles --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      color: var(--text-dark);
+      background-color: var(--bg-light-green);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 90%;
+      /* --- 1. WIDENED LAYOUT --- */
+      max-width: 1400px; 
+      margin: 0 auto;
+    }
+
+    /* --- Header --- */
+    .main-header {
+      background-color: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-soft);
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+       font-size: 1.5rem;
+       font-weight: 800;
+       background: var(--grad-primary);
+       background-clip: text;
+       -webkit-background-clip: text;
+       color: transparent;
+       -webkit-text-fill-color: transparent;
+     }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+    .nav-links li a {
+      color: var(--text-grey);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+    .nav-links li a:hover {
+      color: var(--grad-primary-color);
+    }
+    
+    /* --- Hero Section --- */
+    .hero-section {
+      background: var(--grad-primary);
+      padding: 100px 0 80px 0;
+      text-align: center;
+      color: var(--bg-white);
+    }
+    .hero-text h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      line-height: 1.1;
+    }
+    .hero-text p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+    }
+    .hero-text .btn {
+      display: inline-block;
+      background: var(--bg-white);
+      color: var(--grad-primary-color);
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .hero-text .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+
+    /* --- 2-COLUMN LAYOUT for content --- */
+    .content-layout {
+        display: flex;
+        gap: 30px;
+        padding-top: 60px;
+    }
+    
+    /* --- STICKY INDEX FRAME (Sidebar) --- */
+    .program-index {
+        /* --- 2. WIDENED SIDEBAR --- */
+        flex: 0 0 300px; /* Fixed width */
+        position: sticky;
+        top: 100px; /* Adjust based on header height */
+        height: calc(100vh - 120px);
+        
+        background: var(--bg-white);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        box-shadow: var(--shadow-soft);
+        padding: 20px;
+    }
+    .program-index h3 {
+        text-align: center;
+        color: var(--grad-primary-color);
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .program-index-list {
+        list-style: none;
+        height: calc(100% - 50px); /* Fill remaining height */
+        overflow-y: auto; /* Add scrollbar if list is long */
+    }
+    .program-index-list li a {
+        color: var(--text-grey);
+        text-decoration: none;
+        transition: all 0.3s;
+        display: block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    .program-index-list li a:hover {
+        background: var(--bg-light-green);
+        color: var(--grad-primary-color);
+    }
+
+    /* --- Topics Section (Main Content) --- */
+    .topics-section {
+      flex: 1; /* Take remaining space */
+      position: relative;
+    }
+    
+    .topics-section h2 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 80px;
+      color: var(--text-dark);
+    }
+    
+    /* --- MODIFIED Timeline Layout --- */
+    .topic-steps-container {
+      position: relative;
+    }
+    
+    /* The central timeline bar (now on the left) */
+    .topic-steps-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      /* Positioned on the left side */
+      left: 25px; 
+      transform: translateX(-50%);
+      width: 4px;
+      height: 100%;
+      background-color: var(--border-color);
+      z-index: 1;
+    }
+
+    /* --- Topic Step (Timeline Card Design) --- */
+    .topic-step {
+      padding: 20px 30px;
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+      
+      position: relative;
+      z-index: 2;
+      /* All cards are on the right side of the bar */
+      width: 90%;
+      left: 10%;
+      margin-bottom: 40px;
+      
+      animation: fadeInBottom 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .topic-step:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-strong);
+    }
+    
+    /* Step Number (Timeline Dot) */
+    .step-number {
+      position: absolute;
+      top: 20px;
+      /* Positioned on the left timeline bar */
+      left: -40px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--grad-primary);
+      color: var(--bg-white);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: 4px solid var(--bg-light-green);
+      z-index: 10;
+    }
+
+    /* --- Step Title --- */
+    .step-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--text-dark);
+      padding-left: 10px; /* Align with bar */
+    }
+    
+    /* --- CSS for Code and Output --- */
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.9em;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    
+    .output {
+      background: var(--bg-light-green);
+      padding: 10px 15px;
+      border-left: 5px solid var(--grad-primary-color);
+      margin-top: 15px;
+      border-radius: 0 6px 6px 0;
+      color: var(--text-dark);
+      font-size: 0.95em;
+    }
+    .output strong {
+      color: var(--grad-primary-color);
+    }
+
+    /* --- Footer --- */
+    footer {
+        text-align: center;
+        padding: 40px 20px;
+        margin-top: 40px;
+        background-color: var(--bg-white);
+        border-top: 1px solid var(--border-color);
+        color: var(--text-grey);
+    }
+    footer span {
+        color: var(--grad-primary-color);
+        font-weight: 600;
+    }
+    
+    /* --- BACK TO TOP BUTTON --- */
+    #backToTopBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      z-index: 99;
+      border: none;
+      outline: none;
+      background: var(--grad-primary); /* Themed */
+      color: white;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 18px;
+      line-height: 1;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-strong);
+    }
+    #backToTopBtn:hover {
+      filter: brightness(1.2); /* Brighter */
+    }
+
+    /* --- Fade in animation --- */
+    @keyframes fadeInBottom {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 992px) {
+        .content-layout {
+            flex-direction: column; /* Stack sidebar on top */
+        }
+        .program-index {
+            position: static; /* No longer sticky */
+            height: auto;
+            width: 100%;
+            max-height: 300px; /* Limit height */
+        }
+        .topic-step,
+        .topic-step:nth-child(even) {
+            width: 80%;
+            left: 15%;
+        }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-text h1 {
+        font-size: 2.5rem;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 480px) {
+        .topic-steps-container::before {
+            left: 15px;
+        }
+        .topic-step,
+        .topic-step:nth-child(even) {
+            width: 80%;
+            left: 18%;
+        }
+        .step-number,
+        .topic-step:nth-child(even) .step-number {
+            left: -30px;
+            width: 40px;
+            height: 40px;
+            font-size: 0.9rem;
+        }
+    }
+
+
+  </style>
+</head>
+<body>
+  
+  <header class="main-header">
+    <div class="container navbar">
+      <div class="logo">JavaEdu</div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="index.html#topics">Back to Programs</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-text">
+        <h1>Core Java: Multithreading</h1>
+        <p>
+          Practice and learn Java Multithreading programs with output and explanations.
+        </p>
+        <a href="index.html#topics" class="btn">BACK TO ALL TOPICS</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container content-layout">
+  
+    <aside class="program-index">
+      <h3>Multithreading Menu</h3>
+      <ul class="program-index-list" id="menuList">
+        </ul>
+    </aside>
+    
+    <main class="topics-section">
+      <div class="topic-steps-container" id="programsContainer">
+        </div>
+    </main>
+    
+  </div> 
+  
+  <footer>
+    <p>© 2025 <span>JavaEdu</span> | Designed by <span>Navneet Kaur</span> | Mentor: <span>Mr. Chetan Gupta</span></p>
+  </footer>
+  
+  <a href="#" id="backToTopBtn" title="Go to top">&#9650;</a>
+
+  <script>
+    // --- UPDATED script to build BOTH index and timeline ---
+    
+    const programs = [
+      {
+        title: "1. Create a thread by extending Thread class.",
+        code: `class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running by extending Thread class.");
+    }
+
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        t1.start();
+    }
+}`,
+        output: "Thread is running by extending Thread class."
+      },
+      {
+        title: "2. Create a thread by implementing Runnable interface.",
+        code: `class MyRunnable implements Runnable {
+    public void run() {
+        System.out.println("Thread is running by implementing Runnable.");
+    }
+
+    public static void main(String[] args) {
+        MyRunnable m1 = new MyRunnable();
+        Thread t1 = new Thread(m1);
+        t1.start();
+    }
+}`,
+        output: "Thread is running by implementing Runnable."
+      },
+      {
+        title: "3. Program to demonstrate sleep() method.",
+        code: `class SleepExample extends Thread {
+    public void run() {
+        for(int i=1; i<=5; i++) {
+            try {
+                Thread.sleep(500); // Thread sleeps for 500ms
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
+            System.out.println(i);
+        }
+    }
+
+    public static void main(String[] args) {
+        SleepExample t1 = new SleepExample();
+        t1.start();
+    }
+}`,
+        output: "1\n2\n3\n4\n5 (with 500ms delay between each number)"
+      },
+      {
+        title: "4. Program to demonstrate join() method.",
+        code: `class JoinExample extends Thread {
+    public void run() {
+        for(int i=1; i<=3; i++) {
+            System.out.println("Thread " + Thread.currentThread().getName() + ": " + i);
+        }
+    }
+
+    public static void main(String[] args) {
+        JoinExample t1 = new JoinExample();
+        JoinExample t2 = new JoinExample();
+        t1.start();
+
+        try {
+            t1.join(); // Main thread waits for t1 to finish
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+
+        t2.start(); // t2 starts only after t1 finishes
+    }
+}`,
+        output: "Thread Thread-0: 1\nThread Thread-0: 2\nThread Thread-0: 3\nThread Thread-1: 1\nThread Thread-1: 2\nThread Thread-1: 3"
+      },
+      {
+        title: "5. Program to demonstrate getPriority() and setPriority().",
+        code: `class PriorityExample extends Thread {
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + " priority: " + Thread.currentThread().getPriority());
+    }
+
+    public static void main(String[] args) {
+        PriorityExample t1 = new PriorityExample();
+        PriorityExample t2 = new PriorityExample();
+        
+        t1.setPriority(Thread.MIN_PRIORITY); // Set priority to 1
+        t2.setPriority(Thread.MAX_PRIORITY); // Set priority to 10
+        
+        t1.start();
+        t2.start();
+    }
+}`,
+        output: "Thread-1 priority: 10\nThread-0 priority: 1"
+      },
+      {
+        title: "6. Program to demonstrate synchronization (synchronized method).",
+        code: `class PrintTable {
+    synchronized void print(int n) { // Synchronized method
+        for(int i=1; i<=5; i++) {
+            System.out.println(n * i);
+            try {
+                Thread.sleep(400);
+            } catch (Exception e) {}
+        }
+    }
+}
+
+class Thread1 extends Thread {
+    PrintTable t;
+    Thread1(PrintTable t) { this.t = t; }
+    public void run() { t.print(5); }
+}
+
+class Thread2 extends Thread {
+    PrintTable t;
+    Thread2(PrintTable t) { this.t = t; }
+    public void run() { t.print(100); }
+}
+
+public class SyncMethod {
+    public static void main(String[] args) {
+        PrintTable obj = new PrintTable();
+        Thread1 t1 = new Thread1(obj);
+        Thread2 t2 = new Thread2(obj);
+        t1.start();
+        t2.start();
+    }
+}`,
+        output: "5\n10\n15\n20\n25\n100\n200\n300\n400\n500"
+      },
+      {
+        title: "7. Program to demonstrate synchronization (synchronized block).",
+        code: `class PrintTableBlock {
+    void print(int n) {
+        synchronized(this) { // Synchronized block
+            for(int i=1; i<=5; i++) {
+                System.out.println(n * i);
+                try {
+                    Thread.sleep(400);
+                } catch (Exception e) {}
+            }
+        }
+    }
+}
+
+class ThreadBlock1 extends Thread {
+    PrintTableBlock t;
+    ThreadBlock1(PrintTableBlock t) { this.t = t; }
+    public void run() { t.print(5); }
+}
+
+class ThreadBlock2 extends Thread {
+    PrintTableBlock t;
+    ThreadBlock2(PrintTableBlock t) { this.t = t; }
+    public void run() { t.print(100); }
+}
+
+public class SyncBlock {
+    public static void main(String[] args) {
+        PrintTableBlock obj = new PrintTableBlock();
+        ThreadBlock1 t1 = new ThreadBlock1(obj);
+        ThreadBlock2 t2 = new ThreadBlock2(obj);
+        t1.start();
+        t2.start();
+    }
+}`,
+        output: "5\n10\n15\n20\n25\n100\n200\n300\n400\n500"
+      },
+      {
+        title: "8. Program for inter-thread communication (wait(), notify()).",
+        code: `class Customer {
+    int amount = 10000;
+
+    synchronized void withdraw(int amount) {
+        System.out.println("going to withdraw...");
+        if (this.amount < amount) {
+            System.out.println("Less balance; waiting for deposit...");
+            try {
+                wait();
+            } catch (Exception e) {}
+        }
+        this.amount -= amount;
+        System.out.println("withdraw completed... balance is: " + this.amount);
+    }
+
+    synchronized void deposit(int amount) {
+        System.out.println("going to deposit...");
+        this.amount += amount;
+        System.out.println("deposit completed... balance is: " + this.amount);
+        notify();
+    }
+}
+
+public class WaitNotify {
+    public static void main(String[] args) {
+        Customer c = new Customer();
+        new Thread() {
+            public void run() { c.withdraw(15000); }
+        }.start();
+        new Thread() {
+            public void run() { c.deposit(10000); }
+        }.start();
+    }
+}`,
+        output: "going to withdraw...\nLess balance; waiting for deposit...\ngoing to deposit...\ndeposit completed... balance is: 20000\nwithdraw completed... balance is: 5000"
+      }
+    ];
+
+    const cardContainer = document.getElementById("programsContainer");
+    const menuList = document.getElementById("menuList"); 
+
+    programs.forEach((prog, i) => {
+      // 1. Create the timeline card
+      const step = document.createElement("div");
+      step.className = "topic-step";
+      step.id = "prog" + (i + 1);
+      step.style.animationDelay = `${i * 0.05}s`;
+
+      const stepNumber = document.createElement("div");
+      stepNumber.className = "step-number";
+      stepNumber.textContent = (i + 1).toString().padStart(2, '0');
+      
+      const stepTitle = document.createElement("h3");
+      stepTitle.className = "step-title";
+      stepTitle.textContent = prog.title;
+      
+      const codeBlock = document.createElement("pre");
+      // Use textContent to safely insert code
+      codeBlock.textContent = prog.code; 
+      
+      const outputBlock = document.createElement("div");
+      outputBlock.className = "output";
+      // Replace newlines in output with <br> tags
+      const formattedOutput = prog.output.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+      outputBlock.innerHTML = `<strong>Output:</strong> ${formattedOutput}`;
+
+      step.appendChild(stepNumber);
+      step.appendChild(stepTitle);
+      step.appendChild(codeBlock);
+      step.appendChild(outputBlock);
+      
+      cardContainer.appendChild(step);
+
+      // 2. Create the index list item
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="#prog${i + 1}">${prog.title}</a>`;
+      menuList.appendChild(li);
+    });
+  </script>
+  
+  <script>
+    // --- SCRIPT for Back to Top button ---
+    const topBtn = document.getElementById("backToTopBtn");
+    
+    window.onscroll = function() {
+      if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        topBtn.style.display = "block";
+      } else {
+        topBtn.style.display = "none";
+      }
+    };
+    
+    topBtn.onclick = function(e) {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    };
+  </script>
+
+</body>
+</html>

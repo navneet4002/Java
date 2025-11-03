@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Inheritance - Project Showcase</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS Variables ("Spring Green" Theme) --- */
+    :root {
+      --bg-light-green: #f4fdf4;
+      --bg-white: #ffffff;
+      --text-dark: #1a3a1a;
+      --text-grey: #4a694a;
+      
+      --grad-primary: linear-gradient(90deg, #00bfa5 0%, #008a4a 100%);
+      --grad-primary-color: #008a4a;
+      --grad-secondary-color: #00bfa5;
+      
+      --border-color: #d4f0d4;
+      --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.04);
+      --shadow-strong: 0 8px 25px rgba(0, 138, 74, 0.15);
+    }
+
+    /* --- Global Styles --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      color: var(--text-dark);
+      background-color: var(--bg-light-green);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 90%;
+      /* --- 1. WIDENED LAYOUT --- */
+      max-width: 1400px; 
+      margin: 0 auto;
+    }
+
+    /* --- Header --- */
+    .main-header {
+      background-color: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-soft);
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+       font-size: 1.5rem;
+       font-weight: 800;
+       background: var(--grad-primary);
+       background-clip: text;
+       -webkit-background-clip: text;
+       color: transparent;
+       -webkit-text-fill-color: transparent;
+     }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+    .nav-links li a {
+      color: var(--text-grey);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+    .nav-links li a:hover {
+      color: var(--grad-primary-color);
+    }
+    
+    /* --- Hero Section --- */
+    .hero-section {
+      background: var(--grad-primary);
+      padding: 100px 0 80px 0;
+      text-align: center;
+      color: var(--bg-white);
+    }
+    .hero-text h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      line-height: 1.1;
+    }
+    .hero-text p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+    }
+    .hero-text .btn {
+      display: inline-block;
+      background: var(--bg-white);
+      color: var(--grad-primary-color);
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .hero-text .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+
+    /* --- 2-COLUMN LAYOUT for content --- */
+    .content-layout {
+        display: flex;
+        gap: 30px;
+        padding-top: 60px;
+    }
+    
+    /* --- STICKY INDEX FRAME (Sidebar) --- */
+    .program-index {
+        /* --- 2. WIDENED SIDEBAR --- */
+        flex: 0 0 300px; /* Fixed width */
+        position: sticky;
+        top: 100px; /* Adjust based on header height */
+        height: calc(100vh - 120px);
+        
+        background: var(--bg-white);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        box-shadow: var(--shadow-soft);
+        padding: 20px;
+    }
+    .program-index h3 {
+        text-align: center;
+        color: var(--grad-primary-color);
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .program-index-list {
+        list-style: none;
+        height: calc(100% - 50px); /* Fill remaining height */
+        overflow-y: auto; /* Add scrollbar if list is long */
+    }
+    .program-index-list li a {
+        color: var(--text-grey);
+        text-decoration: none;
+        transition: all 0.3s;
+        display: block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    .program-index-list li a:hover {
+        background: var(--bg-light-green);
+        color: var(--grad-primary-color);
+    }
+
+    /* --- Topics Section (Main Content) --- */
+    .topics-section {
+      flex: 1; /* Take remaining space */
+      position: relative;
+    }
+    
+    .topics-section h2 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 80px;
+      color: var(--text-dark);
+    }
+    
+    /* --- MODIFIED Timeline Layout --- */
+    .topic-steps-container {
+      position: relative;
+    }
+    
+    /* The central timeline bar (now on the left) */
+    .topic-steps-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      /* Positioned on the left side */
+      left: 25px; 
+      transform: translateX(-50%);
+      width: 4px;
+      height: 100%;
+      background-color: var(--border-color);
+      z-index: 1;
+    }
+
+    /* --- Topic Step (Timeline Card Design) --- */
+    .topic-step {
+      padding: 20px 30px;
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+      
+      position: relative;
+      z-index: 2;
+      /* All cards are on the right side of the bar */
+      width: 90%;
+      left: 10%;
+      margin-bottom: 40px;
+      
+      animation: fadeInBottom 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .topic-step:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-strong);
+    }
+    
+    /* Step Number (Timeline Dot) */
+    .step-number {
+      position: absolute;
+      top: 20px;
+      /* Positioned on the left timeline bar */
+      left: -40px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--grad-primary);
+      color: var(--bg-white);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: 4px solid var(--bg-light-green);
+      z-index: 10;
+    }
+
+    /* --- Step Title --- */
+    .step-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--text-dark);
+      padding-left: 10px; /* Align with bar */
+    }
+    
+    /* --- CSS for Code and Output --- */
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.9em;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    
+    .output {
+      background: var(--bg-light-green);
+      padding: 10px 15px;
+      border-left: 5px solid var(--grad-primary-color);
+      margin-top: 15px;
+      border-radius: 0 6px 6px 0;
+      color: var(--text-dark);
+      font-size: 0.95em;
+    }
+    .output strong {
+      color: var(--grad-primary-color);
+    }
+
+    /* --- Footer --- */
+    footer {
+        text-align: center;
+        padding: 40px 20px;
+        margin-top: 40px;
+        background-color: var(--bg-white);
+        border-top: 1px solid var(--border-color);
+        color: var(--text-grey);
+    }
+    footer span {
+        color: var(--grad-primary-color);
+        font-weight: 600;
+    }
+    
+    /* --- BACK TO TOP BUTTON --- */
+    #backToTopBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      z-index: 99;
+      border: none;
+      outline: none;
+      background: var(--grad-primary); /* Themed */
+      color: white;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 18px;
+      line-height: 1;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-strong);
+    }
+    #backToTopBtn:hover {
+      filter: brightness(1.2); /* Brighter */
+    }
+
+    /* --- Fade in animation --- */
+    @keyframes fadeInBottom {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 992px) {
+        .content-layout {
+            flex-direction: column; /* Stack sidebar on top */
+        }
+        .program-index {
+            position: static; /* No longer sticky */
+            height: auto;
+            width: 100%;
+            max-height: 300px; /* Limit height */
+        }
+        .topic-step,
+        .topic-step:nth-child(even) {
+            width: 80%;
+            left: 15%;
+        }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-text h1 {
+        font-size: 2.5rem;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 480px) {
+        .topic-steps-container::before {
+            left: 15px;
+        }
+        .topic-step,
+        .topic-step:nth-child(even) {
+            width: 80%;
+            left: 18%;
+        }
+        .step-number,
+        .topic-step:nth-child(even) .step-number {
+            left: -30px;
+            width: 40px;
+            height: 40px;
+            font-size: 0.9rem;
+        }
+    }
+
+  </style>
+</head>
+<body>
+  
+  <header class="main-header">
+    <div class="container navbar">
+      <div class="logo">JavaEdu</div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="index.html#topics">Back to Programs</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-text">
+        <h1>Core Java: Inheritance</h1>
+        <p>
+          Practice and learn Java Inheritance programs with output and explanations.
+        </p>
+        <a href="index.html#topics" class="btn">BACK TO ALL TOPICS</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container content-layout">
+  
+    <aside class="program-index">
+      <h3>Inheritance Menu</h3>
+      <ul class="program-index-list" id="menuList">
+        </ul>
+    </aside>
+    
+    <main class="topics-section">
+      <div class="topic-steps-container" id="programsContainer">
+        </div>
+    </main>
+    
+  </div> 
+  
+  <footer>
+    <p>© 2025 <span>JavaEdu</span> | Designed by <span>Navneet Kaur</span> | Mentor: <span>Mr. Chetan Gupta</span></p>
+  </footer>
+  
+  <a href="#" id="backToTopBtn" title="Go to top">&#9650;</a>
+
+  <script>
+    // --- UPDATED script to build BOTH index and timeline ---
+    
+    const programs = [
+      {
+        title: "1. Write a Java program to create a class called Animal with a method called makeSound(). Create a subclass called Cat that overrides the makeSound() method to bark.",
+        code: `class Animal {
+    void makeSound() {
+        System.out.println("Animal makes a sound");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    void makeSound() {
+        System.out.println("Cat barks");
+    }
+
+    public static void main(String[] args) {
+        Animal a = new Cat();
+        a.makeSound();
+    }
+}`,
+        output: "Cat barks"
+      },
+      {
+        title: "2. Write a Java program to create a class called Vehicle with a method called drive(). Create a subclass called Car that overrides the drive() method to print 'Repairing a car'.",
+        code: `class Vehicle {
+    void drive() {
+        System.out.println("Vehicle is moving");
+    }
+}
+
+class Car extends Vehicle {
+    @Override
+    void drive() {
+        System.out.println("Repairing a car");
+    }
+
+    public static void main(String[] args) {
+        Vehicle v = new Car();
+        v.drive();
+    }
+}`,
+        output: "Repairing a car"
+      },
+      {
+        title: "3. Write a Java program to create a class called Shape with a method called getArea(). Create a subclass called Rectangle that overrides the getArea() method to calculate the area of a rectangle.",
+        code: `class Shape {
+    double getArea() {
+        return 0;
+    }
+}
+
+class Rectangle extends Shape {
+    double length, width;
+    Rectangle(double l, double w) {
+        this.length = l;
+        this.width = w;
+    }
+    @Override
+    double getArea() {
+        return length * width;
+    }
+
+    public static void main(String[] args) {
+        Rectangle r = new Rectangle(10, 5);
+        System.out.println("Area: " + r.getArea());
+    }
+}`,
+        output: "Area: 50.0"
+      },
+      {
+        title: "4. Write a Java program to create a class called Employee with methods called work() and getSalary(). Create a subclass called HRManager that overrides the work() method and adds a new method called addEmployee().",
+        code: `class Employee {
+    void work() {
+        System.out.println("Employee working");
+    }
+
+    double getSalary() {
+        return 40000;
+    }
+}
+
+class HRManager extends Employee {
+    @Override
+    void work() {
+        System.out.println("HR Manager working");
+    }
+
+    void addEmployee() {
+        System.out.println("Adding new employee");
+    }
+
+    public static void main(String[] args) {
+        HRManager hr = new HRManager();
+        hr.work();
+        hr.addEmployee();
+        System.out.println("Salary: " + hr.getSalary());
+    }
+}`,
+        output: "HR Manager working\nAdding new employee\nSalary: 40000.0"
+      },
+      {
+        title: "5. Write a Java program to create a class known as 'BankAccount' with methods called deposit() and withdraw(). Create a subclass called SavingsAccount that overrides the withdraw() method to prevent withdrawals if the account balance falls below one hundred.",
+        code: `class BankAccount {
+    double balance = 500;
+
+    void deposit(double amount) {
+        balance += amount;
+    }
+
+    void withdraw(double amount) {
+        balance -= amount;
+    }
+}
+
+class SavingsAccount extends BankAccount {
+    @Override
+    void withdraw(double amount) {
+        if (balance - amount < 100) {
+            System.out.println("Withdrawal denied! Balance too low.");
+        } else {
+            balance -= amount;
+            System.out.println("Withdrawn: " + amount);
+        }
+    }
+
+    public static void main(String[] args) {
+        SavingsAccount s = new SavingsAccount();
+        s.withdraw(450);
+        s.withdraw(300);
+    }
+}`,
+        output: "Withdrawn: 450.0\nWithdrawal denied! Balance too low."
+      },
+      {
+        title: "6. Write a Java program to create a class called Animal with a method named move(). Create a subclass called Cheetah that overrides the move() method to run.",
+        code: `class Animal {
+    void move() {
+        System.out.println("Animals can move");
+    }
+}
+
+class Cheetah extends Animal {
+    @Override
+    void move() {
+        System.out.println("Cheetah runs fast");
+    }
+
+    public static void main(String[] args) {
+        Animal a = new Cheetah();
+        a.move();
+    }
+}`,
+        output: "Cheetah runs fast"
+      },
+      {
+        title: "7. Write a Java program to create a class known as Person with methods called getFirstName() and getLastName(). Create a subclass called Employee that adds a new method named getEmployeeId() and overrides the getLastName() method to include the employee's job title.",
+        code: `class Person {
+    String firstName = "John";
+    String lastName = "Doe";
+
+    String getFirstName() {
+        return firstName;
+    }
+
+    String getLastName() {
+        return lastName;
+    }
+}
+
+class Employee extends Person {
+    String jobTitle = "Developer";
+    int employeeId = 101;
+
+    @Override
+    String getLastName() {
+        return super.getLastName() + " (" + jobTitle + ")";
+    }
+
+    int getEmployeeId() {
+        return employeeId;
+    }
+
+    public static void main(String[] args) {
+        Employee e = new Employee();
+        System.out.println(e.getFirstName() + " " + e.getLastName());
+        System.out.println("Employee ID: " + e.getEmployeeId());
+    }
+}`,
+        output: "John Doe (Developer)\nEmployee ID: 101"
+      },
+      {
+        title: "8. Write a Java program to create a class called Shape with methods called getPerimeter() and getArea(). Create a subclass called Circle that overrides these methods.",
+        code: `class Shape {
+    double getPerimeter() { return 0; }
+    double getArea() { return 0; }
+}
+
+class Circle extends Shape {
+    double radius;
+    Circle(double r) { radius = r; }
+
+    @Override
+    double getPerimeter() { return 2 * Math.PI * radius; }
+
+    @Override
+    double getArea() { return Math.PI * radius * radius; }
+
+    public static void main(String[] args) {
+        Circle c = new Circle(5);
+        System.out.println("Perimeter: " + c.getPerimeter());
+        System.out.println("Area: " + c.getArea());
+    }
+}`,
+        output: "Perimeter: 31.41592653589793\nArea: 78.53981633974483"
+      },
+      {
+        title: "9. Write a Java program to create a vehicle class hierarchy (Vehicle → Truck, Car, Motorcycle).",
+        code: `class Vehicle {
+    String make, model, fuelType;
+    int year;
+
+    void displayInfo() {
+        System.out.println(make + " " + model + " (" + year + ")");
+    }
+}
+
+class Truck extends Vehicle {
+    Truck() { make = "Tata"; model = "407"; year = 2019; fuelType = "Diesel"; }
+    void fuelEfficiency() { System.out.println("Fuel efficiency: 8 km/l"); }
+}
+
+class Car extends Vehicle {
+    Car() { make = "Honda"; model = "City"; year = 2020; fuelType = "Petrol"; }
+    void fuelEfficiency() { System.out.println("Fuel efficiency: 18 km/l"); }
+}
+
+class Motorcycle extends Vehicle {
+    Motorcycle() { make = "Yamaha"; model = "R15"; year = 2021; fuelType = "Petrol"; }
+    void fuelEfficiency() { System.out.println("Fuel efficiency: 40 km/l"); }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Truck t = new Truck();
+        Car c = new Car();
+        Motorcycle m = new Motorcycle();
+
+        t.displayInfo(); t.fuelEfficiency();
+        c.displayInfo(); c.fuelEfficiency();
+        m.displayInfo(); m.fuelEfficiency();
+    }
+}`,
+        output: "Tata 407 (2019)\nFuel efficiency: 8 km/l\nHonda City (2020)\nFuel efficiency: 18 km/l\nYamaha R15 (2021)\nFuel efficiency: 40 km/l"
+      },
+      {
+        title: "10. Write a Java program to create an Employee hierarchy (Employee → Manager, Developer, Programmer).",
+        code: `class Employee {
+    String name, address, jobTitle;
+    double salary;
+
+    void displayInfo() {
+        System.out.println(name + " - " + jobTitle + " - Salary: " + salary);
+    }
+}
+
+class Manager extends Employee {
+    Manager() { name = "Amit"; jobTitle = "Manager"; salary = 80000; }
+    void calculateBonus() { System.out.println("Bonus: " + (salary * 0.1)); }
+}
+
+class Developer extends Employee {
+    Developer() { name = "Ravi"; jobTitle = "Developer"; salary = 60000; }
+    void generateReport() { System.out.println("Generating project report..."); }
+}
+
+class Programmer extends Employee {
+    Programmer() { name = "Neha"; jobTitle = "Programmer"; salary = 50000; }
+    void manageProjects() { System.out.println("Managing project codebase..."); }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Manager m = new Manager();
+        Developer d = new Developer();
+        Programmer p = new Programmer();
+
+        m.displayInfo(); m.calculateBonus();
+        d.displayInfo(); d.generateReport();
+        p.displayInfo(); p.manageProjects();
+    }
+}`,
+        output: "Amit - Manager - Salary: 80000.0\nBonus: 8000.0\nRavi - Developer - Salary: 60000.0\nGenerating project report...\nNeha - Programmer - Salary: 50000.0\nManaging project codebase..."
+      },
+      {
+        title: "11. Create a program showing an example of super keyword.",
+        code: `class Parent {
+    String name = "Parent Class";
+}
+
+class Child extends Parent {
+    String name = "Child Class";
+    void display() {
+        System.out.println("Accessing from Child: " + name);
+        System.out.println("Accessing from Parent: " + super.name);
+    }
+
+    public static void main(String[] args) {
+        Child c = new Child();
+        c.display();
+    }
+}`,
+        output: "Accessing from Child: Child Class\nAccessing from Parent: Parent Class"
+      },
+      {
+        title: "12. Create a program showing an example of super function.",
+        code: `class Parent {
+    void show() {
+        System.out.println("Parent method");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    void show() {
+        super.show();
+        System.out.println("Child method");
+    }
+
+    public static void main(String[] args) {
+        Child c = new Child();
+        c.show();
+    }
+}`,
+        output: "Parent method\nChild method"
+      },
+      {
+        title: "13. Create a program showing an example of method overriding.",
+        code: `class Parent {
+    void display() {
+        System.out.println("Display from Parent");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    void display() {
+        System.out.println("Display from Child");
+    }
+
+    public static void main(String[] args) {
+        Parent p = new Child();
+        p.display();
+    }
+}`,
+        output: "Display from Child"
+      },
+      {
+        title: "14. Create a program showing an example of dynamic method dispatch.",
+        code: `class A {
+    void callMe() { System.out.println("Inside A's callMe"); }
+}
+
+class B extends A {
+    @Override
+    void callMe() { System.out.println("Inside B's callMe"); }
+}
+
+class C extends A {
+    @Override
+    void callMe() { System.out.println("Inside C's callMe"); }
+}
+
+class Test {
+    public static void main(String[] args) {
+        A a;
+        a = new B();
+        a.callMe();
+        a = new C();
+        a.callMe();
+    }
+}`,
+        output: "Inside B's callMe\nInside C's callMe"
+      },
+      {
+        title: "15. Write a Java program to create an abstract class Animal with an abstract method sound(). Create subclasses Lion and Tiger that extend Animal and implement the sound() method.",
+        code: `abstract class Animal {
+    abstract void sound();
+}
+
+class Lion extends Animal {
+    void sound() { System.out.println("Lion roars"); }
+}
+
+class Tiger extends Animal {
+    void sound() { System.out.println("Tiger growls"); }
+}
+
+class Test {
+    public static void main(String[] args) {
+        Animal a1 = new Lion();
+        Animal a2 = new Tiger();
+        a1.sound();
+        a2.sound();
+    }
+}`,
+        output: "Lion roars\nTiger growls"
+      },
+      {
+        title: "16. Write a Java program to create an abstract class Shape with abstract methods calculateArea() and calculatePerimeter(). Create subclasses Circle and Triangle that extend the Shape class and implement the respective methods to calculate the area and perimeter of each shape.",
+        code: `abstract class Shape {
+    abstract double calculateArea();
+    abstract double calculatePerimeter();
+}
+
+class Circle extends Shape {
+    double radius;
+
+    Circle(double r) {
+        radius = r;
+    }
+
+    double calculateArea() {
+        return Math.PI * radius * radius;
+    }
+
+    double calculatePerimeter() {
+        return 2 * Math.PI * radius;
+    }
+}
+
+class Triangle extends Shape {
+    double a, b, c;
+
+    Triangle(double a, double b, double c) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+
+    double calculateArea() {
+        double s = (a + b + c) / 2;
+        return Math.sqrt(s * (s - a) * (s - b) * (s - c));
+    }
+
+    double calculatePerimeter() {
+        return a + b + c;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Shape c = new Circle(5);
+        Shape t = new Triangle(3, 4, 5);
+
+        System.out.println("Circle Area: " + c.calculateArea());
+        System.out.println("Triangle Perimeter: " + t.calculatePerimeter());
+    }
+}`,
+        output: "Circle Area: 78.53981633974483\nTriangle Perimeter: 12.0"
+      },
+      {
+        title: "17. Write a Java program to create an abstract class BankAccount with abstract methods deposit() and withdraw(). Create subclasses: SavingsAccount and CurrentAccount that extend the BankAccount class and implement the respective methods to handle deposits and withdrawals for each account type.",
+        code: `abstract class BankAccount {
+    double balance;
+
+    BankAccount(double balance) {
+        this.balance = balance;
+    }
+
+    abstract void deposit(double amount);
+    abstract void withdraw(double amount);
+}
+
+class SavingsAccount extends BankAccount {
+    SavingsAccount(double balance) {
+        super(balance);
+    }
+
+    void deposit(double amount) {
+        balance += amount;
+        System.out.println("Deposited: " + amount);
+    }
+
+    void withdraw(double amount) {
+        if (balance - amount >= 100) {
+            balance -= amount;
+            System.out.println("Withdrawn: " + amount);
+        } else {
+            System.out.println("Cannot withdraw, balance below 100!");
+        }
+    }
+}
+
+class CurrentAccount extends BankAccount {
+    CurrentAccount(double balance) {
+        super(balance);
+    }
+
+    void deposit(double amount) {
+        balance += amount;
+    }
+
+    void withdraw(double amount) {
+        balance -= amount;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        SavingsAccount s = new SavingsAccount(500);
+        s.withdraw(450);
+    }
+}`,
+        output: "Withdrawn: 450.0"
+      },
+      {
+        title: "18. Write a Java program to create an abstract class Animal with abstract methods eat() and sleep(). Create subclasses Lion, Tiger, and Deer that extend the Animal class and implement the eat() and sleep() methods differently based on their specific behavior.",
+        code: `abstract class Animal {
+    abstract void eat();
+    abstract void sleep();
+}
+
+class Lion extends Animal {
+    void eat() {
+        System.out.println("Lion eats meat");
+    }
+    void sleep() {
+        System.out.println("Lion sleeps in den");
+    }
+}
+
+class Tiger extends Animal {
+    void eat() {
+        System.out.println("Tiger hunts and eats");
+    }
+    void sleep() {
+        System.out.println("Tiger sleeps under trees");
+    }
+}
+
+class Deer extends Animal {
+    void eat() {
+        System.out.println("Deer eats grass");
+    }
+    void sleep() {
+        System.out.println("Deer sleeps in open fields");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal a = new Lion();
+        a.eat();
+        a.sleep();
+    }
+}`,
+        output: "Lion eats meat\nLion sleeps in den"
+      },
+      {
+        title: "19. Write a Java program to create an abstract class Employee with abstract methods calculateSalary() and displayInfo(). Create subclasses Manager and Programmer that extend the Employee class and implement the respective methods to calculate salary and display information for each role.",
+        code: `abstract class Employee {
+    String name;
+    double baseSalary;
+
+    Employee(String name, double baseSalary) {
+        this.name = name;
+        this.baseSalary = baseSalary;
+    }
+
+    abstract double calculateSalary();
+    abstract void displayInfo();
+}
+
+class Manager extends Employee {
+    Manager(String name, double baseSalary) {
+        super(name, baseSalary);
+    }
+
+    double calculateSalary() {
+        return baseSalary + 10000;
+    }
+
+    void displayInfo() {
+        System.out.println("Manager: " + name + ", Salary: " + calculateSalary());
+    }
+}
+
+class Programmer extends Employee {
+    Programmer(String name, double baseSalary) {
+        super(name, baseSalary);
+    }
+
+    double calculateSalary() {
+        return baseSalary + 5000;
+    }
+
+    void displayInfo() {
+        System.out.println("Programmer: " + name + ", Salary: " + calculateSalary());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Employee e = new Manager("John", 40000);
+        e.displayInfo();
+    }
+}`,
+        output: "Manager: John, Salary: 50000.0"
+      },
+      {
+        title: "20. Write a Java program to create an abstract class Shape3D with abstract methods calculateVolume() and calculateSurfaceArea(). Create subclasses Sphere and Cube that extend the Shape3D class and implement the respective methods to calculate the volume and surface area of each shape.",
+        code: `abstract class Shape3D {
+    abstract double calculateVolume();
+    abstract double calculateSurfaceArea();
+}
+
+class Sphere extends Shape3D {
+    double radius;
+
+    Sphere(double radius) {
+        this.radius = radius;
+    }
+
+    double calculateVolume() {
+        return (4.0 / 3.0) * Math.PI * Math.pow(radius, 3);
+    }
+
+    double calculateSurfaceArea() {
+        return 4 * Math.PI * radius * radius;
+    }
+}
+
+class Cube extends Shape3D {
+    double side;
+
+    Cube(double side) {
+        this.side = side;
+    }
+
+    double calculateVolume() {
+        return Math.pow(side, 3);
+    }
+
+    double calculateSurfaceArea() {
+        return 6 * side * side;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Shape3D s = new Sphere(5);
+        System.out.println("Sphere Volume: " + s.calculateVolume());
+    }
+}`,
+        output: "Sphere Volume: 523.5987755982989"
+      },
+      {
+        title: "21. Write a Java program to create an abstract class Vehicle with abstract methods startEngine() and stopEngine(). Create subclasses Car and Motorcycle that extend the Vehicle class and implement the respective methods to start and stop the engines for each vehicle type.",
+        code: `abstract class Vehicle {
+    abstract void startEngine();
+    abstract void stopEngine();
+}
+
+class Car extends Vehicle {
+    void startEngine() {
+        System.out.println("Car engine started");
+    }
+
+    void stopEngine() {
+        System.out.println("Car engine stopped");
+    }
+}
+
+class Motorcycle extends Vehicle {
+    void startEngine() {
+        System.out.println("Motorcycle engine started");
+    }
+
+    void stopEngine() {
+        System.out.println("Motorcycle engine stopped");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Vehicle v = new Car();
+        v.startEngine();
+        v.stopEngine();
+    }
+}`,
+        output: "Car engine started\nCar engine stopped"
+      },
+      {
+        title: "22. Write a Java program to create an abstract class Person with abstract methods eat() and exercise(). Create subclasses Athlete and LazyPerson that extend the Person class and implement the respective methods to describe how each person eats and exercises.",
+        code: `abstract class Person {
+    abstract void eat();
+    abstract void exercise();
+}
+
+class Athlete extends Person {
+    void eat() {
+        System.out.println("Athlete eats healthy food");
+    }
+
+    void exercise() {
+        System.out.println("Athlete trains daily");
+    }
+}
+
+class LazyPerson extends Person {
+    void eat() {
+        System.out.println("Lazy person eats junk food");
+    }
+
+    void exercise() {
+        System.out.println("Lazy person rarely exercises");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Person p = new Athlete();
+        p.eat();
+        p.exercise();
+    }
+}`,
+        output: "Athlete eats healthy food\nAthlete trains daily"
+      },
+      {
+        title: "23. Write a Java program to create an abstract class Instrument with abstract methods play() and tune(). Create subclasses for Glockenspiel and Violin that extend the Instrument class and implement the respective methods to play and tune each instrument.",
+        code: `abstract class Instrument {
+    abstract void play();
+    abstract void tune();
+}
+
+class Glockenspiel extends Instrument {
+    void play() {
+        System.out.println("Playing Glockenspiel");
+    }
+
+    void tune() {
+        System.out.println("Tuning Glockenspiel");
+    }
+}
+
+class Violin extends Instrument {
+    void play() {
+        System.out.println("Playing Violin");
+    }
+
+    void tune() {
+        System.out.println("Tuning Violin");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Instrument i = new Violin();
+        i.play();
+        i.tune();
+    }
+}`,
+        output: "Playing Violin\nTuning Violin"
+      },
+      {
+        title: "24. Write a Java program to create an abstract class Shape2D with abstract methods draw() and resize(). Create subclasses Rectangle and Circle that extend the Shape2D class and implement the respective methods to draw and resize each shape.",
+        code: `abstract class Shape2D {
+    abstract void draw();
+    abstract void resize();
+}
+
+class Rectangle extends Shape2D {
+    void draw() {
+        System.out.println("Drawing Rectangle");
+    }
+
+    void resize() {
+        System.out.println("Resizing Rectangle");
+    }
+}
+
+class Circle extends Shape2D {
+    void draw() {
+        System.out.println("Drawing Circle");
+    }
+
+    void resize() {
+        System.out.println("Resizing Circle");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Shape2D s = new Circle();
+        s.draw();
+        s.resize();
+    }
+}`,
+        output: "Drawing Circle\nResizing Circle"
+      },
+      {
+        title: "25. Write a Java program to create an abstract class Bird with abstract methods fly() and makeSound(). Create subclasses Eagle and Hawk that extend the Bird class and implement the respective methods to describe how each bird flies and makes a sound.",
+        code: `abstract class Bird {
+    abstract void fly();
+    abstract void makeSound();
+}
+
+class Eagle extends Bird {
+    void fly() {
+        System.out.println("Eagle soars high in the sky");
+    }
+
+    void makeSound() {
+        System.out.println("Eagle screeches");
+    }
+}
+
+class Hawk extends Bird {
+    void fly() {
+        System.out.println("Hawk glides swiftly");
+    }
+
+    void makeSound() {
+        System.out.println("Hawk whistles sharply");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Bird b = new Eagle();
+        b.fly();
+        b.makeSound();
+    }
+}`,
+        output: "Eagle soars high in the sky\nEagle screeches"
+      },
+      {
+        title: "26. Write a Java program to create an abstract class GeometricShape with abstract methods area() and perimeter(). Create subclasses Triangle and Square that extend the GeometricShape class and implement the respective methods to calculate the area and perimeter of each shape.",
+        code: `abstract class GeometricShape {
+    abstract double area();
+    abstract double perimeter();
+}
+
+class Triangle extends GeometricShape {
+    double a, b, c;
+
+    Triangle(double a, double b, double c) {
+        this.a = a; this.b = b; this.c = c;
+    }
+
+    double area() {
+        double s = (a + b + c) / 2;
+        return Math.sqrt(s * (s - a) * (s - b) * (s - c));
+    }
+
+    double perimeter() {
+        return a + b + c;
+    }
+}
+
+class Square extends GeometricShape {
+    double side;
+
+    Square(double side) {
+        this.side = side;
+    }
+
+    double area() {
+        return side * side;
+    }
+
+    double perimeter() {
+        return 4 * side;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        GeometricShape s = new Square(4);
+        System.out.println("Square Area: " + s.area());
+    }
+}`,
+        output: "Square Area: 16.0"
+      }
+    ];
+
+    const cardContainer = document.getElementById("programsContainer");
+    const menuList = document.getElementById("menuList"); 
+
+    programs.forEach((prog, i) => {
+      // 1. Create the timeline card
+      const step = document.createElement("div");
+      step.className = "topic-step";
+      step.id = "prog" + (i + 1);
+      step.style.animationDelay = `${i * 0.05}s`;
+
+      const stepNumber = document.createElement("div");
+      stepNumber.className = "step-number";
+      stepNumber.textContent = (i + 1).toString().padStart(2, '0');
+      
+      const stepTitle = document.createElement("h3");
+      stepTitle.className = "step-title";
+      stepTitle.textContent = prog.title;
+      
+      const codeBlock = document.createElement("pre");
+      // Use textContent to safely insert code
+      codeBlock.textContent = prog.code; 
+      
+      const outputBlock = document.createElement("div");
+      outputBlock.className = "output";
+      // Replace newlines in output with <br> tags
+      const formattedOutput = prog.output.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+      outputBlock.innerHTML = `<strong>Output:</strong> ${formattedOutput}`;
+
+      step.appendChild(stepNumber);
+      step.appendChild(stepTitle);
+      step.appendChild(codeBlock);
+      step.appendChild(outputBlock);
+      
+      cardContainer.appendChild(step);
+
+      // 2. Create the index list item
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="#prog${i + 1}">${prog.title}</a>`;
+      menuList.appendChild(li);
+    });
+  </script>
+  
+  <script>
+    // --- SCRIPT for Back to Top button ---
+    const topBtn = document.getElementById("backToTopBtn");
+    
+    window.onscroll = function() {
+      if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        topBtn.style.display = "block";
+      } else {
+        topBtn.style.display = "none";
+      }
+    };
+    
+    topBtn.onclick = function(e) {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    };
+  </script>
+
+</body>
+</html>

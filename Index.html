@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Project Showcase</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS Variables ("Spring Green" Theme) --- */
+    :root {
+      --bg-light-green: #f4fdf4; /* Light green page background */
+      --bg-white: #ffffff;      /* White for cards/sidebar */
+      --text-dark: #1a3a1a;      /* Dark green text */
+      --text-grey: #4a694a;      /* Muted green-grey */
+      
+      --grad-primary: linear-gradient(90deg, #00bfa5 0%, #008a4a 100%);
+      --grad-primary-color: #008a4a; /* Emerald Green */
+      --grad-secondary-color: #00bfa5; /* Teal */
+      
+      --border-color: #d4f0d4; /* Light green border */
+      --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.04);
+      --shadow-strong: 0 8px 25px rgba(0, 138, 74, 0.15);
+    }
+
+    /* --- Global Styles --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      color: var(--text-dark);
+      background-color: var(--bg-light-green);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* --- NEW Header (Replaces Sidebar) --- */
+    .main-header {
+      background-color: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-soft);
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: var(--grad-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+    .nav-links li a {
+      color: var(--text-grey);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+    .nav-links li a:hover,
+    .nav-links li a.active {
+      color: var(--grad-primary-color);
+    }
+    
+    /* --- NEW Full-Width Hero Section --- */
+    .hero-section {
+      background: var(--grad-primary);
+      padding: 100px 0 80px 0;
+      text-align: center;
+      color: var(--bg-white);
+    }
+    .hero-text h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      line-height: 1.1;
+    }
+    .hero-text p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+    }
+    .project-info {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      display: inline-block;
+      text-align: left;
+    }
+    .project-info p {
+      font-size: 1rem;
+      color: var(--bg-white);
+      margin: 0;
+      line-height: 1.8;
+    }
+    .project-info p strong {
+      font-weight: 700;
+      min-width: 70px;
+      display: inline-block;
+    }
+
+
+    /* --- Topics Section (NEW Timeline Layout) --- */
+    .topics-section {
+      padding: 80px 0;
+      position: relative;
+    }
+
+    .topics-section h2 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 80px;
+      color: var(--text-dark);
+    }
+
+    /* The central timeline bar */
+    .topic-steps-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 100%;
+      background-color: var(--border-color);
+      z-index: 1;
+    }
+
+    .topic-steps-container {
+      position: relative;
+      max-width: 900px; /* Constrain width for timeline */
+      margin: 0 auto;
+    }
+
+    /* --- Topic Step (NEW Timeline Card Design) --- */
+    .topic-step {
+      padding: 20px 30px;
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+      
+      position: relative;
+      z-index: 2;
+      width: 45%; /* Each card takes less than half */
+      margin-bottom: 40px; /* Space between steps */
+      
+      animation: fadeInBottom 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .topic-step:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-strong);
+    }
+
+    /* --- Alternating Layout --- */
+    .topic-step:nth-child(odd) {
+      left: 0;
+      clear: both;
+    }
+    .topic-step:nth-child(even) {
+      left: 55%; /* Move to the right side */
+      clear: both;
+    }
+    
+    /* --- NEW Step Number (Timeline Dot) --- */
+    .step-number {
+      position: absolute;
+      top: 20px;
+      left: -10.5%; /* Position over the timeline bar */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--grad-primary);
+      color: var(--bg-white);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: 4px solid var(--bg-light-green);
+      z-index: 10;
+    }
+    
+    /* Position dot on the other side for even cards */
+    .topic-step:nth-child(even) .step-number {
+      left: auto;
+      right: -10.5%;
+    }
+
+
+    /* --- Step Title --- */
+    .step-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-dark);
+    }
+
+    /* --- Step Link Button --- */
+    .step-link {
+        color: var(--bg-white);
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 12px 20px;
+        border-radius: 10px;
+        background: var(--grad-primary);
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 138, 74, 0.25);
+        display: inline-block; /* Changed from block */
+    }
+    .step-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 138, 74, 0.35);
+        color: var(--bg-white);
+        filter: brightness(1.1);
+    }
+
+    /* --- Fade in animation --- */
+    @keyframes fadeInBottom {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 992px) {
+        .topic-steps-container::before {
+            left: 25px; /* Move timeline bar to the left */
+        }
+        .topic-step,
+        .topic-step:nth-child(even) {
+            width: 80%;
+            left: 15%; /* All cards stack on the right */
+            margin-bottom: 30px;
+        }
+        .step-number,
+        .topic-step:nth-child(even) .step-number {
+            left: -40px; /* Position all dots on the timeline bar */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .step-title {
+            padding-left: 10px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-text h1 {
+        font-size: 2.5rem;
+      }
+      .nav-links {
+        display: none; /* Hide for simplicity on mobile */
+      }
+    }
+    
+    @media (max-width: 480px) {
+        .topic-steps-container::before {
+            left: 15px;
+        }
+        .topic-step,
+        .topic-step:nth-child(even) {
+            width: 80%;
+            left: 18%;
+        }
+        .step-number,
+        .topic-step:nth-child(even) .step-number {
+            left: -30px;
+            width: 40px;
+            height: 40px;
+            font-size: 0.9rem;
+        }
+    }
+
+  </style>
+</head>
+<body>
+  
+  <header class="main-header">
+    <div class="container navbar">
+      <div class="logo">JavaDev Project</div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#" class="active">Home</a></li>
+          <li><a href="#topics">Programs</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-text">
+        <h1>Java Project Showcase</h1>
+        <p>
+          An interactive timeline exploring Core Java concepts, from the fundamentals 
+          to advanced topics.
+        </p>
+        <div class="project-info">
+          <p><strong>Student:</strong> Navneet Kaur 4002/23</p>
+          <p><strong>Mentor:</strong> MR Chetan Gupta</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="topics-section" id="topics">
+    <div class="container">
+      <h2>Project Module Timeline</h2>
+      <div class="topic-steps-container" id="topicsContainer">
+        </div>
+    </div>
+  </main>
+  
+  <script>
+    // --- JAVASCRIPT (Unchanged) ---
+    // This script works perfectly with the new CSS.
+    // The CSS handles all the alternating (odd/even) layout.
+    
+    const topicLinks = {
+      "APPLETS": "Applets.html",
+      "BASIC PROGRAMMING CONSTRUCTS": "BasicProgrammingConstructs.html",
+      "DATA CONVERSION": "DataConversion.html",
+      "DELEGATION EVENT MODEL": "DelegationEventModel.html",
+      "EXCEPTION HANDLING": "ExceptionHandling.html",
+      "FUNCTIONS": "Functions.html",
+      "GRAPHICAL USER INTERFACE (AWT)": "GUI_AWT.html",
+      "GRAPHICAL USER INTERFACE (SWINGS)": "GUI_Swings.html",
+      "INHERITANCE": "Inheritance.html",
+      "INPUT/OUTPUT": "InputOutput.html",
+      "INTERFACES": "Interfaces.html",
+      "JAVA DATABASE CONNECTIVITY": "JavaDatabaseConnectivity.html",
+      "MULTI-DIMENSION ARRAYS": "MultiDimensionArrays.html",
+      "MULTITHREADING": "Multithreading.html",
+      "OBJECT ORIENTED PROGRAMMING": "ObjectOrientedProgramming.html",
+      "PACKAGES": "Packages.html",
+      "SINGLE DIMENSION ARRAYS": "SingleDimensionArrays.html",
+      "STRINGS": "Strings.html"
+    };
+
+    const cardContainer = document.getElementById("topicsContainer");
+
+    const topics = Object.keys(topicLinks);
+
+    topics.forEach((topic, index) => {
+      
+      const step = document.createElement("div");
+      step.className = "topic-step";
+      step.style.animationDelay = `${index * 0.1}s`; // Staggered animation
+
+      const stepNumber = document.createElement("div");
+      stepNumber.className = "step-number";
+      stepNumber.textContent = (index + 1).toString().padStart(2, '0');
+
+      const stepTitle = document.createElement("h3");
+      stepTitle.className = "step-title";
+      stepTitle.textContent = topic;
+
+      const stepLink = document.createElement("a");
+      stepLink.className = "step-link";
+      stepLink.href = topicLinks[topic];
+      stepLink.textContent = "View Details";
+
+      step.appendChild(stepNumber);
+      step.appendChild(stepTitle);
+      step.appendChild(stepLink);
+      cardContainer.appendChild(step);
+      
+      // No sidebar JS needed
+    });
+
+  </script>
+</body>
+</html>

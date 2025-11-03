@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Database Connectivity - Project Showcase</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS Variables ("Spring Green" Theme) --- */
+   :root {
+      --bg-light-green: #f4fdf4;
+      --bg-white: #ffffff;
+      --text-dark: #1a3a1a;
+      --text-grey: #4a694a;
+      
+      --grad-primary: linear-gradient(90deg, #00bfa5 0%, #008a4a 100%);
+      --grad-primary-color: #008a4a;
+      --grad-secondary-color: #00bfa5;
+      
+      --border-color: #d4f0d4;
+      --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.04);
+      --shadow-strong: 0 8px 25px rgba(0, 138, 74, 0.15);
+    }
+
+    /* --- Global Styles --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      color: var(--text-dark);
+      background-color: var(--bg-light-green);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 90%;
+      /* --- 1. WIDENED LAYOUT --- */
+      max-width: 1400px; 
+      margin: 0 auto;
+    }
+
+    /* --- Header --- */
+    .main-header {
+      background-color: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-soft);
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+       font-size: 1.5rem;
+       font-weight: 800;
+       background: var(--grad-primary);
+       background-clip: text;
+       -webkit-background-clip: text;
+       color: transparent;
+       -webkit-text-fill-color: transparent;
+     }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+    .nav-links li a {
+      color: var(--text-grey);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+    .nav-links li a:hover {
+      color: var(--grad-primary-color);
+    }
+    
+    /* --- Hero Section --- */
+    .hero-section {
+      background: var(--grad-primary);
+      padding: 100px 0 80px 0;
+      text-align: center;
+      color: var(--bg-white);
+    }
+    .hero-text h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      line-height: 1.1;
+    }
+    .hero-text p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+    }
+    .hero-text .btn {
+      display: inline-block;
+      background: var(--bg-white);
+      color: var(--grad-primary-color);
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .hero-text .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+
+    /* --- 2-COLUMN LAYOUT for content --- */
+    .content-layout {
+        display: flex;
+        gap: 30px;
+        padding-top: 60px;
+    }
+    
+    /* --- STICKY INDEX FRAME (Sidebar) --- */
+    .program-index {
+        /* --- 2. WIDENED SIDEBAR --- */
+        flex: 0 0 300px; /* Fixed width */
+        position: sticky;
+        top: 100px; /* Adjust based on header height */
+        height: calc(100vh - 120px);
+        
+        background: var(--bg-white);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        box-shadow: var(--shadow-soft);
+        padding: 20px;
+    }
+    .program-index h3 {
+        text-align: center;
+        color: var(--grad-primary-color);
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .program-index-list {
+        list-style: none;
+        height: calc(100% - 50px); /* Fill remaining height */
+        overflow-y: auto; /* Add scrollbar if list is long */
+    }
+    .program-index-list li a {
+        color: var(--text-grey);
+        text-decoration: none;
+        transition: all 0.3s;
+        display: block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    .program-index-list li a:hover {
+        background: var(--bg-light-green);
+        color: var(--grad-primary-color);
+    }
+
+    /* --- Topics Section (Main Content) --- */
+    .topics-section {
+      flex: 1; /* Take remaining space */
+      position: relative;
+    }
+    
+    .topics-section h2 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 80px;
+      color: var(--text-dark);
+    }
+    
+    /* --- MODIFIED Timeline Layout --- */
+    .topic-steps-container {
+      position: relative;
+    }
+    
+    /* The central timeline bar (now on the left) */
+    .topic-steps-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      /* Positioned on the left side */
+      left: 25px; 
+      transform: translateX(-50%);
+      width: 4px;
+      height: 100%;
+      background-color: var(--border-color);
+      z-index: 1;
+    }
+
+    /* --- Topic Step (Timeline Card Design) --- */
+    .topic-step {
+      padding: 20px 30px;
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+      
+      position: relative;
+      z-index: 2;
+      /* All cards are on the right side of the bar */
+      width: 90%;
+      left: 10%;
+      margin-bottom: 40px;
+      
+      animation: fadeInBottom 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .topic-step:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-strong);
+    }
+    
+    /* Step Number (Timeline Dot) */
+    .step-number {
+      position: absolute;
+      top: 20px;
+      /* Positioned on the left timeline bar */
+      left: -40px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--grad-primary);
+      color: var(--bg-white);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: 4px solid var(--bg-light-green);
+      z-index: 10;
+    }
+
+    /* --- Step Title --- */
+    .step-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--text-dark);
+      padding-left: 10px; /* Align with bar */
+    }
+    
+    /* --- CSS for Code and Output --- */
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.9em;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    
+    .output {
+      background: var(--bg-light-green);
+      padding: 10px 15px;
+      border-left: 5px solid var(--grad-primary-color);
+      margin-top: 15px;
+      border-radius: 0 6px 6px 0;
+      color: var(--text-dark);
+      font-size: 0.95em;
+    }
+    .output strong {
+      color: var(--grad-primary-color);
+    }
+
+    /* --- Footer --- */
+    footer {
+        text-align: center;
+        padding: 40px 20px;
+        margin-top: 40px;
+        background-color: var(--bg-white);
+        border-top: 1px solid var(--border-color);
+        color: var(--text-grey);
+    }
+    footer span {
+        color: var(--grad-primary-color);
+        font-weight: 600;
+    }
+    
+    /* --- BACK TO TOP BUTTON --- */
+    #backToTopBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      z-index: 99;
+      border: none;
+      outline: none;
+      background: var(--grad-primary); /* Themed */
+      color: white;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 18px;
+      line-height: 1;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-strong);
+    }
+    #backToTopBtn:hover {
+      filter: brightness(1.2); /* Brighter */
+    }
+
+    /* --- Fade in animation --- */
+    @keyframes fadeInBottom {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 992px) {
+        .content-layout {
+            flex-direction: column; /* Stack sidebar on top */
+        }
+        .program-index {
+            position: static; /* No longer sticky */
+            height: auto;
+            width: 100%;
+            max-height: 300px; /* Limit height */
+        }
+        .topic-step,
+        .topic-step:nth-child(even) {
+            width: 80%;
+            left: 15%;
+        }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-text h1 {
+        font-size: 2.5rem;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 480px) {
+        .topic-steps-container::before {
+            left: 15px;
+        }
+        .topic-step,
+        .topic-step:nth-child(even) {
+            width: 80%;
+            left: 18%;
+        }
+        .step-number,
+        .topic-step:nth-child(even) .step-number {
+            left: -30px;
+            width: 40px;
+            height: 40px;
+            font-size: 0.9rem;
+        }
+    }
+
+  </style>
+</head>
+<body>
+  
+  <header class="main-header">
+    <div class="container navbar">
+      <div class="logo">JavaEdu</div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="index.html#topics">Back to Programs</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-text">
+        <h1>Core Java: JDBC</h1>
+        <p>
+          Practice and learn Java Database Connectivity programs with output and explanations.
+        </p>
+        <a href="index.html#topics" class="btn">BACK TO ALL TOPICS</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container content-layout">
+  
+    <aside class="program-index">
+      <h3>JDBC Menu</h3>
+      <ul class="program-index-list" id="menuList">
+        </ul>
+    </aside>
+    
+    <main class="topics-section">
+      <div class="topic-steps-container" id="programsContainer">
+        </div>
+    </main>
+    
+  </div> 
+  
+  <footer>
+    <p>© 2025 <span>JavaEdu</span> | Designed by <span>Navneet Kaur</span> | Mentor: <span>Mr. Chetan Gupta</span></p>
+  </footer>
+  
+  <a href="#" id="backToTopBtn" title="Go to top">&#9650;</a>
+
+  <script>
+    // --- UPDATED script to build BOTH index and timeline ---
+    
+    const programs = [
+      {
+        title: "1. Create the connection with MySQL Database and manage the driver.",
+        code: `import java.sql.*;
+
+public class CreateConnection {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+
+        try {
+            // Load driver (optional for newer JDBC, but shown for clarity)
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            try (Connection con = DriverManager.getConnection(url, user, pass)) {
+                System.out.println("Connected to MySQL successfully!");
+            }
+        } catch (ClassNotFoundException cnfe) {
+            System.out.println("Driver not found: " + cnfe.getMessage());
+        } catch (SQLException se) {
+            System.out.println("SQL error: " + se.getMessage());
+        }
+    }
+}`,
+        output: "Connected to MySQL successfully! (if credentials are correct)\nSQL error: (Connection error message if credentials wrong)"
+      },
+      {
+        title: "2. Create the table in the database from Java API.",
+        code: `import java.sql.*;
+
+public class CreateTable {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+        String createSQL = "CREATE TABLE IF NOT EXISTS students (" +
+                           "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                           "name VARCHAR(100), " +
+                           "age INT)";
+
+        try (Connection con = DriverManager.getConnection(url, user, pass);
+             Statement stmt = con.createStatement()) {
+            stmt.executeUpdate(createSQL);
+            System.out.println("Table 'students' created (if not existed).");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}`,
+        output: "Table 'students' created (if not existed)."
+      },
+      {
+        title: "3. Insert the row in the table in the database from Java API.",
+        code: `import java.sql.*;
+
+public class InsertRow {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+        String insertSQL = "INSERT INTO students (name, age) VALUES (?, ?)";
+
+        try (Connection con = DriverManager.getConnection(url, user, pass);
+             PreparedStatement ps = con.prepareStatement(insertSQL)) {
+            ps.setString(1, "Amit");
+            ps.setInt(2, 22);
+            int rows = ps.executeUpdate();
+            System.out.println(rows + " row(s) inserted.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}`,
+        output: "1 row(s) inserted."
+      },
+      {
+        title: "4. Update the row in the table in the database from Java API.",
+        code: `import java.sql.*;
+
+public class UpdateRow {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+        String updateSQL = "UPDATE students SET age = ? WHERE name = ?";
+
+        try (Connection con = DriverManager.getConnection(url, user, pass);
+             PreparedStatement ps = con.prepareStatement(updateSQL)) {
+            ps.setInt(1, 23);
+            ps.setString(2, "Amit");
+            int rows = ps.executeUpdate();
+            System.out.println(rows + " row(s) updated.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}`,
+        output: "1 row(s) updated. (if 'Amit' exists)"
+      },
+      {
+        title: "5. Delete the row in the table in the database from Java API.",
+        code: `import java.sql.*;
+
+public class DeleteRow {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+        String deleteSQL = "DELETE FROM students WHERE name = ?";
+
+        try (Connection con = DriverManager.getConnection(url, user, pass);
+             PreparedStatement ps = con.prepareStatement(deleteSQL)) {
+            ps.setString(1, "Amit");
+            int rows = ps.executeUpdate();
+            System.out.println(rows + " row(s) deleted.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}`,
+        output: "1 row(s) deleted. (if 'Amit' was found)"
+      },
+      {
+        title: "6. Select multiple rows from the database table in Java API and show the result on the screen.",
+        code: `import java.sql.*;
+
+public class SelectRows {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+        String query = "SELECT id, name, age FROM students";
+
+        try (Connection con = DriverManager.getConnection(url, user, pass);
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                int age = rs.getInt("age");
+                System.out.println(id + " | " + name + " | " + age);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}`,
+        output: "1 | Ravi | 21\n... (all rows in the table)"
+      },
+      {
+        title: "7. Create a Scrollable Readonly ResultSet and ask the row number from the user and display that row on the screen.",
+        code: `import java.sql.*;
+import java.util.Scanner;
+
+public class ScrollableReadOnly {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+        String query = "SELECT id, name, age FROM students";
+
+        try (Connection con = DriverManager.getConnection(url, user, pass);
+             Statement stmt = con.createStatement(
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_READ_ONLY);
+             ResultSet rs = stmt.executeQuery(query);
+             Scanner sc = new Scanner(System.in)) {
+
+            System.out.print("Enter row number to display: ");
+            int row = sc.nextInt();
+
+            if (rs.absolute(row)) { // moves cursor to given row number
+                System.out.println(rs.getInt("id") + " | " +
+                                   rs.getString("name") + " | " +
+                                   rs.getInt("age"));
+            } else {
+                System.out.println("Row " + row + " does not exist.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}`,
+        output: "Enter row number to display: 1\n1 | Ravi | 21 (or content of row 1)"
+      },
+      {
+        title: "8. Create a Scrollable Updatable ResultSet and insert a new row, update an existing row and delete the row from ResultSet (changes reflected to DB).",
+        code: `import java.sql.*;
+import java.util.Scanner;
+
+public class ScrollableUpdatable {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+        String query = "SELECT id, name, age FROM students";
+
+        try (Connection con = DriverManager.getConnection(url, user, pass);
+             Statement stmt = con.createStatement(
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_UPDATABLE);
+             ResultSet rs = stmt.executeQuery(query);
+             Scanner sc = new Scanner(System.in)) {
+
+            System.out.println("Choose action: 1=insert, 2=update, 3=delete");
+            int action = sc.nextInt();
+            sc.nextLine(); // consume newline
+
+            if (action == 1) {
+                System.out.print("Name: ");
+                String name = sc.nextLine();
+                System.out.print("Age: ");
+                int age = sc.nextInt();
+                rs.moveToInsertRow();
+                rs.updateString("name", name);
+                rs.updateInt("age", age);
+                rs.insertRow();
+                rs.moveToCurrentRow();
+                System.out.println("Inserted new row.");
+            } else if (action == 2) {
+                System.out.print("Enter id to update: ");
+                int id = sc.nextInt();
+                boolean found = false;
+                rs.beforeFirst();
+                while (rs.next()) {
+                    if (rs.getInt("id") == id) {
+                        found = true;
+                        rs.updateString("name", "UpdatedName"); // or ask user
+                        rs.updateInt("age", 30);
+                        rs.updateRow();
+                        System.out.println("Row updated.");
+                        break;
+                    }
+                }
+                if (!found) System.out.println("ID not found.");
+            } else if (action == 3) {
+                System.out.print("Enter id to delete: ");
+                int id = sc.nextInt();
+                boolean found = false;
+                rs.beforeFirst();
+                while (rs.next()) {
+                    if (rs.getInt("id") == id) {
+                        rs.deleteRow();
+                        found = true;
+                        System.out.println("Row deleted.");
+                        break;
+                    }
+                }
+                if (!found) System.out.println("ID not found.");
+            } else {
+                System.out.println("Invalid action.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}`,
+        output: "Choose action: 1=insert, 2=update, 3=delete\n(User input followed by action status)"
+      },
+      {
+        title: "9. Create a Java Program to show insert, update, delete of the table using PreparedStatement.",
+        code: `import java.sql.*;
+
+public class PreparedStatementCRUD {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";
+        String user = "root";
+        String pass = "your_password";
+
+        String insertSQL = "INSERT INTO students (name, age) VALUES (?, ?)";
+        String updateSQL = "UPDATE students SET age = ? WHERE id = ?";
+        String deleteSQL = "DELETE FROM students WHERE id = ?";
+
+        try (Connection con = DriverManager.getConnection(url, user, pass)) {
+
+            // Insert
+            try (PreparedStatement ps = con.prepareStatement(insertSQL)) {
+                ps.setString(1, "Ravi");
+                ps.setInt(2, 21);
+                System.out.println(ps.executeUpdate() + " row(s) inserted.");
+            }
+
+            // Update
+            try (PreparedStatement ps = con.prepareStatement(updateSQL)) {
+                ps.setInt(1, 25);
+                ps.setInt(2, 1); // id to update
+                System.out.println(ps.executeUpdate() + " row(s) updated.");
+            }
+
+            // Delete
+            try (PreparedStatement ps = con.prepareStatement(deleteSQL)) {
+                ps.setInt(1, 2); // id to delete
+                System.out.println(ps.executeUpdate() + " row(s) deleted.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}`,
+        output: "1 row(s) inserted.\n1 row(s) updated.\n1 row(s) deleted."
+      }
+    ];
+
+    const cardContainer = document.getElementById("programsContainer");
+    const menuList = document.getElementById("menuList"); 
+
+    programs.forEach((prog, i) => {
+      // 1. Create the timeline card
+      const step = document.createElement("div");
+      step.className = "topic-step";
+      step.id = "prog" + (i + 1);
+      step.style.animationDelay = `${i * 0.05}s`;
+
+      const stepNumber = document.createElement("div");
+      stepNumber.className = "step-number";
+      stepNumber.textContent = (i + 1).toString().padStart(2, '0');
+      
+      const stepTitle = document.createElement("h3");
+      stepTitle.className = "step-title";
+      stepTitle.textContent = prog.title;
+      
+      const codeBlock = document.createElement("pre");
+      // Use textContent to safely insert code
+      codeBlock.textContent = prog.code; 
+      
+      const outputBlock = document.createElement("div");
+      outputBlock.className = "output";
+      // Replace newlines in output with <br> tags
+      const formattedOutput = prog.output.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+      outputBlock.innerHTML = `<strong>Output:</strong> ${formattedOutput}`;
+
+      step.appendChild(stepNumber);
+      step.appendChild(stepTitle);
+      step.appendChild(codeBlock);
+      step.appendChild(outputBlock);
+      
+      cardContainer.appendChild(step);
+
+      // 2. Create the index list item
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="#prog${i + 1}">${prog.title}</a>`;
+      menuList.appendChild(li);
+    });
+  </script>
+  
+  <script>
+    // --- SCRIPT for Back to Top button ---
+    const topBtn = document.getElementById("backToTopBtn");
+    
+    window.onscroll = function() {
+      if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        topBtn.style.display = "block";
+      } else {
+        topBtn.style.display = "none";
+      }
+    };
+    
+    topBtn.onclick = function(e) {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    };
+  </script>
+
+</body>
+</html>
